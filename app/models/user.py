@@ -1,12 +1,12 @@
 from app.extensions import db
 
-class Person(db.Model):
-    __abstract__ = True
-
+class User(db.Model):
+    __tablename__ = 'users'
+    
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100))
     phone_number = db.Column(db.String(100))
     profile_image = db.Column(db.String(100))
     created_on = db.Column(db.DateTime, default=db.func.now())
-    
+   
