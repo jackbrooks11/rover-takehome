@@ -1,12 +1,10 @@
 from app.extensions import db
-
-class User(db.Model):
+from app.models.base import Base
+class User(Base):
     __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
+
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
     phone_number = db.Column(db.String(100))
     profile_image = db.Column(db.String(100))
-    created_on = db.Column(db.DateTime, default=db.func.now())
-   
+    
