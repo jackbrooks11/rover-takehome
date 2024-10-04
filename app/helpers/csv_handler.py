@@ -72,7 +72,8 @@ class CsvHandler:
             DataFrame: A DataFrame containing sitter data merged with user IDs.
         """
         sitter_df = self.df[['sitter_email', 'sitter', 'sitter_phone_number', 'sitter_image']]
-        sitter_df = sitter_df.merge(self.user_df[['email', 'id']], left_on='sitter_email', right_on='email', how='left').rename(columns=lambda x: x.replace('sitter_', '').replace('sitter', 'name'))
+        sitter_df = sitter_df.merge(self.user_df[['email', 'id']], left_on='sitter_email', right_on='email', how='left').drop(columns=['sitter_email'])
+        sitter_df.rename(columns=lambda x: x.replace('sitter_', '').replace('sitter', 'name'), inplace=True)
         return sitter_df
     
     def _extract_booking_data(self):
@@ -87,11 +88,11 @@ class CsvHandler:
         
         # Get owner id for booking dataframe
         booking_df = booking_df.merge(self.user_df[['email', 'id']], left_on='owner_email', right_on='email', how='left').drop(columns=['email', 'owner_email'])
-        booking_df = booking_df.rename(columns={'id': 'owner_id'})
+        booking_df.rename(columns={'id': 'owner_id'}, inplace=True)
 
         # Get sitter id for booking dataframe
         booking_df = booking_df.merge(self.user_df[['email', 'id']], left_on='sitter_email', right_on='email', how='left').drop(columns=['email', 'sitter_email'])
-        booking_df = booking_df.rename(columns={'id': 'sitter_id'})
+        booking_df.rename(columns={'id': 'sitter_id'}, inplace=True)
 
         booking_df['start_date'] = pd.to_datetime(booking_df['start_date'])
         booking_df['end_date'] = pd.to_datetime(booking_df['end_date'])
@@ -108,13 +109,14 @@ class CsvHandler:
             DataFrame: A DataFrame containing review data.
         """
         review_df = self.booking_df
-        review_df = review_df.rename(
+        review_df.rename(
             columns={
                 'owner_id': 'reviewer',
                 'sitter_id': 'reviewee',
                 'id': 'booking_id',
                 'text': 'description'
-            }
+            },
+            inplace=True
         )
         return review_df
 
@@ -127,13 +129,13 @@ class CsvHandler:
         """
         pet_df = self.df[['dogs', 'owner_email']]
         # Transforms dog values from pipe-delimited strings to lists
-        pet_df['dogs'] = pet_df['dogs'].apply(lambda x: x.split('|'))
+        pet_df.loc[:, 'dogs'] = pet_df['dogs'].apply(lambda x: x.split('|'))
         # Creates a new row for each dog
         pet_df = pet_df.explode('dogs').reset_index(drop=True)
         # Merge with user dataframe to get user ids
         pet_df = pet_df.merge(self.user_df[['email', 'id']], left_on='owner_email', right_on='email', how='left').drop(columns=['email', 'owner_email'])
 
-        pet_df = pet_df.rename(columns={'id': 'owner_id', 'dogs': 'name'})
+        pet_df.rename(columns={'id': 'owner_id', 'dogs': 'name'}, inplace=True)
         return pet_df
     
     def _prepare_user_df(self):
