@@ -11,7 +11,7 @@ class Sitter(User):
     #      where the primary key of this table would be a foreign key to users.id, the default sqlalchemy
     #      behavior is to first insert a row into User, fetch the inserted id, and then insert into Sitter
     # Joined table inheritance would reduce data redundancy by not requiring us to re-define columns in
-    # Sitter. If bulk load of csv was not required, this would probably be the way to go.
+    # Sitter. If bulk load of csv was not required, this could be the way to go.
     __mapper_args__ = {
         "concrete": True,
     }
@@ -25,6 +25,10 @@ class Sitter(User):
     sum_of_reviews = db.Column(db.Integer)
 
     def get_unique_letters(self):
+        """
+        Calculates the distinct letters in the `name` attribute.
+
+        """
         extract_chars = "".join(filter(lambda x: x.isalpha(), self.name.lower()))
         return set(extract_chars) 
 
@@ -44,7 +48,7 @@ class Sitter(User):
         else:
             # Total letters in the English alphabet
             total_alphabet_letters = 26
-            # Get string containing all letters in name
+            # Get set containing all letters in name
             unique_chars = self.get_unique_letters()
 
             # Calculate the profile score as 5 times the fraction of the English alphabet covered

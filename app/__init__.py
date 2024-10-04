@@ -6,7 +6,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     # Initialize Flask extensions here
-    db.init_app(app)    
+    db.init_app(app)
     # Register blueprints here
 
     return app
