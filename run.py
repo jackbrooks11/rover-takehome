@@ -75,12 +75,12 @@ def output_csv():
     Outputs sitter search scores to a CSV file.
 
     This function calls calculate_search_scores to get a DataFrame of sitter data,
-    formats and sorts the DataFrame, and outputs it to a CSV file named 'sitter_scores.csv'.
+    formats and sorts the DataFrame, and outputs it to a CSV file named 'sitters.csv'.
     """
     output_df = calculate_search_scores()
     output_df = output_df[["email", "name", "profile_score", "ratings_score", "search_score"]]
     output_df.sort_values(by=['search_score', 'name'], ascending=[False, True], inplace=True)
-    output_df.to_csv('sitter_scores.csv', index=False, float_format='%.2f')
+    output_df.to_csv('sitters.csv', index=False, float_format='%.2f')
 
 if __name__ == '__main__':
     """
