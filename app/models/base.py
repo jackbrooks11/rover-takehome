@@ -1,6 +1,7 @@
 from abc import abstractmethod
+from functools import partialmethod
 import logging
-from sqlalchemy import insert
+from sqlalchemy import insert, update
 from sqlalchemy.orm import DeclarativeBase
 from app.extensions import db
 # 1. Configure logging to output raw SQL statements
@@ -20,5 +21,35 @@ class Base(DeclarativeBase):
             return []
         ids = session.scalars(
             insert(cls).returning(cls.id, sort_by_parameter_order=sorted), data
-        )
+        ).all()
+
         return ids
+
+    @classmethod
+    def bulk_update(cls, session, data, sorted=False):
+        if not data:
+            return []
+        session.execute(
+            update(cls), data
+        ).all()
+    
+    @classmethod
+    def get_all(cls, session):
+        return session.query(cls).all()
+
+    def to_dict(self):
+        """
+        Converts an instance of a class into a dictionary,
+        where keys are attribute names and values are attribute values.
+        """
+        # Use vars() to dynamically access instance attributes
+        # vars(self) returns the instance’s __dict__ (i.e., attribute names and their values)
+        return {key: value for key, value in vars(self).items() if not key.startswith('_')}
+
+    @classmethod
+    def get_all_as_dicts(cls, session):
+        all_rows = cls.get_all(session)
+        output = []  # Initialize as a list
+        for row in all_rows:
+            output.append(row.to_dict())  # Call to_dict() on each instance
+        return output

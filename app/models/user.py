@@ -6,5 +6,5 @@ class User(Base):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True)
     phone_number = db.Column(db.String(100))
-    profile_image = db.Column(db.String(100))
+    image = db.Column(db.String(100))
     

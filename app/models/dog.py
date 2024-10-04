@@ -11,4 +11,3 @@ class Dog(Pet):
     name = db.Column(db.String(100), nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_on = db.Column(db.DateTime, default=db.func.now())
-    
